@@ -54,6 +54,12 @@ Requirements
 - Description of the technical achievements you attempted with this visualization.
 - Description of the design achievements you attempted with this visualization.
 
+4. Submit a pull request and name it as follow
+```
+a4-your Gh username-your first name-your lastname
+
+```
+
 Extra Links
 ---
 
