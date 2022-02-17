@@ -1,38 +1,25 @@
-Assignment 4 - DataVis Remix + Multiple Views
+OPTIONAL Assignment 4 - Brushing and Linking
 ===
 
-The primary aim of this assignment is to showcase your **individual** skills at critiquing, redesigning, and extending visualizations on the web.
+The primary aim of this assignment is to showcase your **individual** skills at supporting interactive experiences with visualizations.
 
 ### Your Task
 
-Your task is to choose a visualization, remix it, and add at least two linked-views.
+Your task is to craft a visualization with a dataset of your choosing, and to specifically support brushing and linking of some kind to support exploration through two or more views of the data.
 
-By remix, we mean:
+By linked views, we mean:
 
-- Critique the original vis
-- Redesign some aspect of it, using better task abstractions, encodings, etc.
-- Implement your redesign
-
-Examples of remixes include:
-- taking a static choropleth map with a bad color scale, implementing a new version in d3, adding interactivity, and improving the color scale to show the original data in a more effective way
-- finding a poorly designed or hard-to-use interactive visualization, and making a new version with better interaction design, such as features that enable the user to explore the data in new ways, by adding new views
-
-By two linked views, we mean:
-
-- Have two separate visualizations (likely separate SVGs), that visualize data using different idioms
+- Have at least two separate visualizations (likely separate SVGs), that visualize data, possibly with different techniques.
 - Linked views means that interacting in one updates the other, and vice versa. Think about the interaction flow that leads to good user experience and aligns with tasks you've identified.
 
 Examples of linked views include:
 - A large central map or scatterplot, with ancillary histograms that can be used to filter-- perhaps time or other dimensions
 
 
-**Remember: the intent of this assignment is for you to demonstrate your understanding of the theory (e.g. concepts from Munzner's book) and practice (d3, and any tools you use for exploring the data) of visualization.**
+Incorporating a brief writeup with your visualization is a good idea.
+Communicate what the original vision was, what the major issues were, and what new things can be seen with your multiple linked views.
 
-Incorporating a brief writeup with your remix is a good idea.
-Communicate what the original vis was, what the major issues were, and what new things can be seen with your redesign.
-You could have text directly on the page, an "info" button, an about page, etc.
-
-### More on Two Linked Views 
+### More on Linking Views
 One of the most powerful techniques for mitigating the shortcomings of a given visualization is to link it with other views.
 
 Linking a map to a bar or scatterplot, for instance, may allow you to overcome the shortcomings of a map.
