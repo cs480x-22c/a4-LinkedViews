@@ -19,8 +19,8 @@
                 var path = d3.geoPath()
                             .projection(d3.geoMercator());
 
-                d3.json("world-countries.json", (e, world) => {
-                    if(e) return console.error(e);
+                d3.json("world-countries.json", world => {
+                    console.log("here");
                     console.log(topojson.feature(world, world.objects.countries).features);
                     svg.append("g")
                         .attr("class", "boundary")
