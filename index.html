@@ -21,7 +21,7 @@
 
                 d3.json("world-countries.json", (e, world) => {
                     if(e) return console.error(e);
-
+                    console.log(topojson.feature(world, world.objects.countries).features);
                     svg.append("g")
                         .attr("class", "boundary")
                         .selectAll("boundary")
