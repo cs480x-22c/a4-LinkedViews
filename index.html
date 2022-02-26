@@ -27,8 +27,8 @@
             }
 
             function ready(error, world) {
-                console.log("here");
-                console.log(topojson.feature(world, world.objects.countries).features);
+                if(error) return console.error(error);
+                
                 svg.append("g")
                     .attr("class", "boundary")
                     .selectAll("boundary")
