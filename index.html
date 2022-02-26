@@ -7,31 +7,24 @@
                 .append("svg")
                     .attr("width", 960)
                     .attr("height", 500)
-                    .style("border-style", "solid")
-                    .on("mousedown", () => {
-                        
-                    })
-                    .on("mouseup", () => {
+                    .style("border-style", "solid");
 
-                    });
+            var path = d3.geoPath();
+            var proj = d3.geoMercator();
 
-            var path = d3.geoPath()
-                        .projection(d3.geoMercator());
-            
+            var data = d3.map();
+
             d3.queue()
                 .defer(d3.json, "world-countries.json")
                 .await(ready);
 
             function ready(error, world) {
-                if(error) return console.error(error);
-
                 svg.append("g")
-                    .attr("class", "boundary")
-                    .selectAll("boundary")
-                        .data(topojson.feature(world, world.objects.countries1).features)
-                        .enter()
-                        .append("path")
-                        .attr("d", path);
+                    .selectAll("path")
+                    .data(world.features)
+                    .enter()
+                    .append("path")
+                        .attr("d", d3.geoPath().projection(proj));
             }
         </script>
     </head>
