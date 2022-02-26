@@ -28,7 +28,7 @@
                 svg.append("g")
                     .attr("class", "boundary")
                     .selectAll("boundary")
-                        .data(topojson.feature(world, world.objects.countries).features)
+                        .data(topojson.feature(world, world.objects.countries1).features)
                         .enter()
                         .append("path")
                         .attr("d", path);
