@@ -20,21 +20,22 @@
 
                 var path = d3.geoPath()
                             .projection(d3.geoMercator());
-                console.log("wtf");
-
-                d3.json("world-countries.json", world => {
-                    console.log("here");
-                    console.log(topojson.feature(world, world.objects.countries).features);
-                    svg.append("g")
-                        .attr("class", "boundary")
-                        .selectAll("boundary")
-                            .data(topojson.feature(world, world.objects.countries).features)
-                            .enter()
-                            .append("path")
-                            .attr("d", path);
-                });
                 
-                console.log("hererere");
+                d3.queue()
+                    .defer(d3.json, "world-countries.json")
+                    .await(ready);
+            }
+
+            function ready(error, world) {
+                console.log("here");
+                console.log(topojson.feature(world, world.objects.countries).features);
+                svg.append("g")
+                    .attr("class", "boundary")
+                    .selectAll("boundary")
+                        .data(topojson.feature(world, world.objects.countries).features)
+                        .enter()
+                        .append("path")
+                        .attr("d", path);
             }
         </script>
     </head>
