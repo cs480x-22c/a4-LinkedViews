@@ -16,8 +16,11 @@
 
                         });
 
+                    
+
                 var path = d3.geoPath()
                             .projection(d3.geoMercator());
+                console.log("wtf");
 
                 d3.json("world-countries.json", world => {
                     console.log("here");
@@ -29,8 +32,9 @@
                             .enter()
                             .append("path")
                             .attr("d", path);
-                }) 
+                });
                 
+                console.log("hererere");
             }
         </script>
     </head>
