@@ -3,32 +3,28 @@
         <script src="https://d3js.org/d3.v4.min.js"></script>
         <script src="topojson.min.js"></script>
         <script>
-            function startup() {
-                let svg = d3.select("#container")
-                    .append("svg")
-                        .attr("width", 960)
-                        .attr("height", 500)
-                        .style("border-style", "solid")
-                        .on("mousedown", () => {
-                            
-                        })
-                        .on("mouseup", () => {
+            var svg = d3.select("#container")
+                .append("svg")
+                    .attr("width", 960)
+                    .attr("height", 500)
+                    .style("border-style", "solid")
+                    .on("mousedown", () => {
+                        
+                    })
+                    .on("mouseup", () => {
 
-                        });
+                    });
 
-                    
-
-                var path = d3.geoPath()
-                            .projection(d3.geoMercator());
-                
-                d3.queue()
-                    .defer(d3.json, "world-countries.json")
-                    .await(ready);
-            }
+            var path = d3.geoPath()
+                        .projection(d3.geoMercator());
+            
+            d3.queue()
+                .defer(d3.json, "world-countries.json")
+                .await(ready);
 
             function ready(error, world) {
                 if(error) return console.error(error);
-                
+
                 svg.append("g")
                     .attr("class", "boundary")
                     .selectAll("boundary")
@@ -39,7 +35,7 @@
             }
         </script>
     </head>
-    <body onload="startup();">
+    <body>
         
         <div id="container" style="text-align: center;">
 
