@@ -39,18 +39,52 @@
 </head>
 
 <body>
+
+    <script src="https://canvasjs.com/assets/script/canvasjs.min.js"></script>
+
     <script type="text/javascript">
 
-        /*  This visualization was made possible by modifying code provided by:
-        
-        Scott Murray, Choropleth example from "Interactive Data Visualization for the Web" 
-        https://github.com/alignedleft/d3-book/blob/master/chapter_12/05_choropleth.html   
-            	
-        Malcolm Maclean, tooltips example tutorial
-        http://www.d3noob.org/2013/01/adding-tooltips-to-d3js-graph.html
-        
-        Mike Bostock, Pie Chart Legend
-        http://bl.ocks.org/mbostock/3888852  */
+        var stateSelected = '';
+
+        let allData = [];
+
+        d3.csv("unemployment.csv", function (error, data) {
+            data.forEach(function (d) {
+                allData.push(d);
+            });
+        });
+
+        const drawUnemploymentOverTimeChart = async (aState) => {
+            const data = getClickedStateUnemployment(aState);
+            const chart = new CanvasJS.Chart("chartContainer", {
+                animationEnabled: true,
+                theme: "light2",
+                title: {
+                    text: `${aState} Unemployment Rate Over Time`
+                },
+                data: [{
+                    type: "line",
+                    indexLabelFontSize: 16,
+                    dataPoints: data
+                }]
+            });
+            chart.render();
+        }
+
+
+        // Get the data
+        const getClickedStateUnemployment = (aState) => {
+            let data = [];
+
+            allData.forEach(function (d) {
+                data.push({
+                    x: new Date(d.date),
+                    y: parseFloat(d[aState])
+                });
+            });
+
+            return data;
+        }
 
 
         //Width and height of map
@@ -71,7 +105,7 @@
         var color = d3.scale.linear()
             .range(["rgb(213,222,217)", "rgb(69,173,168)", "rgb(84,36,55)", "rgb(217,91,67)"]);
 
-        var legendText = ["Cities Lived", "States Lived", "States Visited", "Nada"];
+        var legendText = ["> 10%", "> 6% and < 10%", "> 0.01% and < 6%", "Selected State"];
 
         //Create SVG element and append map to the SVG
         var svgMap = d3.select("body")
@@ -106,9 +140,14 @@
                         var jsonState = json.features[j].properties.name;
 
                         if (dataState == jsonState) {
+                            // TODO
+                            // Change the color of the state if unemployment is above 5%
 
                             // Copy the data value into the JSON
-                            json.features[j].properties.visited = dataValue;
+                            json.features[j].properties.visited = 1;
+                            if(json.features[j].properties.name === 'Texas'){
+                                json.features[j].properties.visited = 0;
+                            }
 
                             // Stop looking through the JSON
                             break;
@@ -125,7 +164,8 @@
                     .style("stroke", "#fff")
                     .style("stroke-width", "1")
                     .on("click", function (d) {
-                        document.getElementById("some-data-vis").innerHTML = d.properties.name;
+                        // getClickedStateUnemployment(d.properties.name);
+                        drawUnemploymentOverTimeChart(d.properties.name);
                     })
                     .on("mouseover", function (d) {
                         div.transition()
@@ -137,6 +177,7 @@
                     })
                     .style("fill", function (d) {
 
+                        console.log(d);
                         // Get data value
                         var value = d.properties.visited;
 
@@ -150,45 +191,6 @@
                             return "rgb(213,222,217)";
                         }
                     });
-
-
-                // Map the cities I have lived in!
-                d3.csv("cities-lived.csv", function (data) {
-
-                    svgMap.selectAll("circle")
-                        .data(data)
-                        .enter()
-                        .append("circle")
-                        .attr("cx", function (d) {
-                            return projection([d.lon, d.lat])[0];
-                        })
-                        .attr("cy", function (d) {
-                            return projection([d.lon, d.lat])[1];
-                        })
-                        .attr("r", function (d) {
-                            return Math.sqrt(d.years) * 4;
-                        })
-                        .style("fill", "rgb(217,91,67)")
-                        .style("opacity", 0.85)
-
-                        // Modification of custom tooltip code provided by Malcolm Maclean, "D3 Tips and Tricks" 
-                        // http://www.d3noob.org/2013/01/adding-tooltips-to-d3js-graph.html
-                        .on("mouseover", function (d) {
-                            div.transition()
-                                .duration(200)
-                                .style("opacity", .9);
-                            div.text(d.place)
-                                .style("left", (d3.event.pageX) + "px")
-                                .style("top", (d3.event.pageY - 28) + "px");
-                        })
-
-                        // fade out tooltip on mouse out               
-                        .on("mouseout", function (d) {
-                            div.transition()
-                                .duration(500)
-                                .style("opacity", 0);
-                        });
-                });
 
                 // Modified Legend Code from Mike Bostock: http://bl.ocks.org/mbostock/3888852
                 var legend = d3.select("body").append("svg")
@@ -216,272 +218,7 @@
 
         });
     </script>
-
-    <script script type="text/javascript">
-        var myData = "date	New York	San Francisco	Austin\n\
-20111001	63.4	62.7	72.2\n\
-20111002	58.0	59.9	67.7\n\
-20111003	53.3	59.1	69.4\n\
-20111004	55.7	58.8	68.0\n\
-20111005	64.2	58.7	72.4\n\
-20111006	58.8	57.0	77.0\n\
-20111007	57.9	56.7	82.3\n\
-20111008	61.8	56.8	78.9\n\
-20111009	69.3	56.7	68.8\n\
-20111010	71.2	60.1	68.7\n\
-20111011	68.7	61.1	70.3\n\
-20111012	61.8	61.5	75.3\n\
-20111013	63.0	64.3	76.6\n\
-20111014	66.9	67.1	66.6\n\
-20111015	61.7	64.6	68.0\n\
-20111016	61.8	61.6	70.6\n\
-20111017	62.8	61.1	71.1\n\
-20111018	60.8	59.2	70.0\n\
-20111019	62.1	58.9	61.6\n\
-20111020	65.1	57.2	57.4\n\
-20111021	55.6	56.4	64.3\n\
-20111022	54.4	60.7	72.4\n";
-
-        var margin = {
-            top: 20,
-            right: 80,
-            bottom: 30,
-            left: 50
-        },
-            width = 900 - margin.left - margin.right,
-            height = 500 - margin.top - margin.bottom;
-
-        var parseDate = d3.time.format("%Y%m%d").parse;
-
-        var x = d3.time.scale()
-            .range([0, width]);
-
-        var y = d3.scale.linear()
-            .range([height, 0]);
-
-        var xAxis = d3.svg.axis()
-            .scale(x)
-            .orient("bottom");
-
-        var yAxis = d3.svg.axis()
-            .scale(y)
-            .orient("left");
-
-        var line = d3.svg.line()
-            .interpolate("basis")
-            .x(function (d) {
-                return x(d.date);
-            })
-            .y(function (d) {
-                return y(d.temperature);
-            });
-
-        var svg = d3.select("body").append("svg")
-            .attr("width", width + margin.left + margin.right)
-            .attr("height", height + margin.top + margin.bottom)
-            .append("g")
-            .attr("transform", "translate(" + margin.left + "," + margin.top + ")");
-
-        var data = d3.tsv.parse(myData);
-
-        color.domain(d3.keys(data[0]).filter(function (key) {
-            return key !== "date";
-        }));
-
-        data.forEach(function (d) {
-            d.date = parseDate(d.date);
-        });
-
-        var cities = color.domain().map(function (name) {
-            return {
-                name: name,
-                values: data.map(function (d) {
-                    return {
-                        date: d.date,
-                        temperature: +d[name]
-                    };
-                })
-            };
-        });
-
-        x.domain(d3.extent(data, function (d) {
-            return d.date;
-        }));
-
-        y.domain([
-            d3.min(cities, function (c) {
-                return d3.min(c.values, function (v) {
-                    return v.temperature;
-                });
-            }),
-            d3.max(cities, function (c) {
-                return d3.max(c.values, function (v) {
-                    return v.temperature;
-                });
-            })
-        ]);
-
-        var legend = svg.selectAll('g')
-            .data(cities)
-            .enter()
-            .append('g')
-            .attr('class', 'legend');
-
-        legend.append('rect')
-            .attr('x', width - 20)
-            .attr('y', function (d, i) {
-                return i * 20;
-            })
-            .attr('width', 10)
-            .attr('height', 10)
-            .style('fill', function (d) {
-                return "red";
-            });
-
-        legend.append('text')
-            .attr('x', width - 8)
-            .attr('y', function (d, i) {
-                return (i * 20) + 9;
-            })
-            .text(function (d) {
-                return d.name;
-            });
-
-        svg.append("g")
-            .attr("class", "x axis")
-            .attr("transform", "translate(0," + height + ")")
-            .call(xAxis);
-
-        svg.append("g")
-            .attr("class", "y axis")
-            .call(yAxis)
-            .append("text")
-            .attr("transform", "rotate(-90)")
-            .attr("y", 6)
-            .attr("dy", ".71em")
-            .style("text-anchor", "end")
-            .text("Temperature (ºF)");
-
-        var city = svg.selectAll(".city")
-            .data(cities)
-            .enter().append("g")
-            .attr("class", "city");
-
-        city.append("path")
-            .attr("class", "line")
-            .attr("d", function (d) {
-                return line(d.values);
-            })
-            .style("stroke", function (d) {
-                return color(2);
-            });
-
-        city.append("text")
-            .datum(function (d) {
-                return {
-                    name: d.name,
-                    value: d.values[d.values.length - 1]
-                };
-            })
-            .attr("transform", function (d) {
-                return "translate(" + x(d.value.date) + "," + y(d.value.temperature) + ")";
-            })
-            .attr("x", 3)
-            .attr("dy", ".35em")
-            .text(function (d) {
-                return d.name;
-            });
-
-        var mouseG = svg.append("g")
-            .attr("class", "mouse-over-effects");
-
-        mouseG.append("path") // this is the black vertical line to follow mouse
-            .attr("class", "mouse-line")
-            .style("stroke", "black")
-            .style("stroke-width", "1px")
-            .style("opacity", "0");
-
-        var lines = document.getElementsByClassName('line');
-
-        var mousePerLine = mouseG.selectAll('.mouse-per-line')
-            .data(cities)
-            .enter()
-            .append("g")
-            .attr("class", "mouse-per-line");
-
-        mousePerLine.append("circle")
-            .attr("r", 7)
-            .style("stroke", function (d) {
-                return "blue";
-            })
-            .style("fill", "none")
-            .style("stroke-width", "1px")
-            .style("opacity", "0");
-
-        mousePerLine.append("text")
-            .attr("transform", "translate(10,3)");
-
-        mouseG.append('svg:rect') // append a rect to catch mouse movements on canvas
-            .attr('width', width) // can't catch mouse events on a g element
-            .attr('height', height)
-            .attr('fill', 'none')
-            .attr('pointer-events', 'all')
-            .on('mouseout', function () { // on mouse out hide line, circles and text
-                d3.select(".mouse-line")
-                    .style("opacity", "0");
-                d3.selectAll(".mouse-per-line circle")
-                    .style("opacity", "0");
-                d3.selectAll(".mouse-per-line text")
-                    .style("opacity", "0");
-            })
-            .on('mouseover', function () { // on mouse in show line, circles and text
-                d3.select(".mouse-line")
-                    .style("opacity", "1");
-                d3.selectAll(".mouse-per-line circle")
-                    .style("opacity", "1");
-                d3.selectAll(".mouse-per-line text")
-                    .style("opacity", "1");
-            })
-            .on('mousemove', function () { // mouse moving over canvas
-                var mouse = d3.mouse(this);
-                d3.select(".mouse-line")
-                    .attr("d", function () {
-                        var d = "M" + mouse[0] + "," + height;
-                        d += " " + mouse[0] + "," + 0;
-                        return d;
-                    });
-
-                d3.selectAll(".mouse-per-line")
-                    .attr("transform", function (d, i) {
-                        console.log(width / mouse[0])
-                        var xDate = x.invert(mouse[0]),
-                            bisect = d3.bisector(function (d) { return d.date; }).right;
-                        idx = bisect(d.values, xDate);
-
-                        var beginning = 0,
-                            end = lines[i].getTotalLength(),
-                            target = null;
-
-                        while (true) {
-                            target = Math.floor((beginning + end) / 2);
-                            pos = lines[i].getPointAtLength(target);
-                            if ((target === end || target === beginning) && pos.x !== mouse[0]) {
-                                break;
-                            }
-                            if (pos.x > mouse[0]) end = target;
-                            else if (pos.x < mouse[0]) beginning = target;
-                            else break; //position found
-                        }
-
-                        d3.select(this).select('text')
-                            .text(y.invert(pos.y).toFixed(2));
-
-                        return "translate(" + mouse[0] + "," + pos.y + ")";
-                    });
-            });
-    </script>
-
-    <h1 id="some-data-vis"></h1>
+    <div id="chartContainer" style="height: 370px; width: 100%;"></div>
 </body>
 
 </html>
