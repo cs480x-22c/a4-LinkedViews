@@ -1,0 +1,295 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="utf-8">
+    <script src="https://d3js.org/d3.v3.min.js"></script>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css" rel="stylesheet"
+        integrity="sha384-1BmE4kWBq78iYhFldvKuhfTAU6auU8tT94WrHftjDbrCEXSU1oBoqyl2QvZ6jIW3" crossorigin="anonymous">
+    <style type="text/css">
+        /* On mouse hover, lighten state color */
+        path:hover {
+            fill-opacity: .7;
+        }
+
+        /* Style for Custom Tooltip */
+        div.tooltip {
+            position: absolute;
+            text-align: center;
+            width: 60px;
+            height: 28px;
+            padding: 2px;
+            font: 12px sans-serif;
+            background: white;
+            border: 0px;
+            border-radius: 8px;
+            pointer-events: none;
+        }
+
+        /* Legend Font Style */
+        body {
+            font: 11px sans-serif;
+        }
+
+        /* Legend Position Style */
+        .legend {
+            position: absolute;
+            left: 800px;
+            top: 350px;
+        }
+
+        #footer {
+            /* center item */
+            width: 100%;
+            text-align: center;
+            padding: 30px;
+            font-size: large;
+        }
+    </style>
+</head>
+
+<body>
+
+    <script src="https://canvasjs.com/assets/script/canvasjs.min.js"></script>
+
+    <div>
+        <h1>Average Unemployment Rate since 2007</h1>
+    </div>
+
+    <script type="text/javascript">
+
+        var stateSelected = '';
+
+        let allData = [];
+
+        d3.csv("unemployment.csv", function (error, data) {
+            data.forEach(function (d) {
+                allData.push(d);
+            });
+        });
+
+        const drawUnemploymentOverTimeChart = async (aState) => {
+            const data = getClickedStateUnemployment(aState);
+            const chart = new CanvasJS.Chart("chartContainer", {
+                animationEnabled: true,
+                theme: "light2",
+                title: {
+                    text: `${aState} Unemployment Rate Over Time`
+                },
+                data: [{
+                    type: "line",
+                    indexLabelFontSize: 16,
+                    dataPoints: data
+                }]
+            });
+            chart.render();
+        }
+
+        //"rgb(213,222,217)", "rgb(69,173,168)", "rgb(84,36,55)", "rgb(217,91,67)"
+        const getColorFromUnemploymentRate = (unemploymentRate) => {
+            if (unemploymentRate < 7) {
+                return 'rgb(69,173,168)';
+            } else if (unemploymentRate < 4) {
+                return 'rgb(84,36,55)';
+            } else if (unemploymentRate > 1) {
+                return 'rgb(217,91,67)';
+            }
+        }
+
+
+        // Get the data
+        const getClickedStateUnemployment = (aState) => {
+            let data = [];
+
+            allData.forEach(function (d) {
+                data.push({
+                    x: new Date(d.date),
+                    y: parseFloat(d[aState])
+                });
+            });
+            return data;
+        }
+
+        const getAverageUnemployment = (aState) => {
+            let data = [];
+
+            allData.forEach(function (d) {
+                data.push({
+                    x: new Date(d.date),
+                    y: parseFloat(d[aState])
+                });
+            });
+
+            let sum = 0;
+            let count = 0;
+            data.forEach(function (d) {
+                sum += d.y;
+                count++;
+            });
+
+            return sum / count;
+        }
+
+
+        //Width and height of map
+        var width = 960;
+        var height = 500;
+
+        // D3 Projection
+        var projection = d3.geo.albersUsa()
+            .translate([width / 2, height / 2])    // translate to center of screen
+            .scale([1000]);          // scale things down so see entire US
+
+        // Define path generator
+        var path = d3.geo.path()               // path generator that will convert GeoJSON to SVG paths
+            .projection(projection);  // tell path generator to use albersUsa projection
+
+
+        // Define linear scale for output
+        var color = d3.scale.linear()
+            .range(["rgb(213,222,217)", "rgb(69,173,168)", "rgb(84,36,55)", "rgb(217,91,67)"]);
+
+        var legendText = ["> 7%", "> 4% and < 7%", "> 0.01% and < 4%", "Selected State"];
+
+        //Create SVG element and append map to the SVG
+        var svgMap = d3.select("body")
+            .append("svg")
+            .attr("width", width)
+            .attr("height", height);
+
+        // Append Div for tooltip to SVG
+        var div = d3.select("body")
+            .append("div")
+            .attr("class", "tooltip")
+            .style("opacity", 0);
+
+        // Load in my states data!
+        d3.csv("stateslived.csv", function (data) {
+            color.domain([0, 1, 2, 3]); // setting the range of the input data
+
+            // Load GeoJSON data and merge with states data
+            d3.json("us-states.json", function (json) {
+                // Loop through each state data value in the .csv file
+                for (var i = 0; i < data.length; i++) {
+
+                    // Grab State Name
+                    var dataState = data[i].state;
+
+                    // Grab data value 
+                    var dataValue = data[i].visited;
+                    var jsonState = json.features[i].properties.name;
+
+                    // get unemployment rate of current state
+                    var unemploymentRate = getAverageUnemployment(dataState);
+
+                    var stateColor = getColorFromUnemploymentRate(unemploymentRate);
+
+                    console.log(dataState, unemploymentRate);
+
+                    // change color based on unemployment rate
+                    if (unemploymentRate > 7) {
+                        json.features[i].properties.visited = 3;
+                    } else if (unemploymentRate > 4.0 && unemploymentRate < 7) {
+                        json.features[i].properties.visited = 2;
+                    } else if (unemploymentRate > 0.01 && unemploymentRate < 4.0) {
+                        json.features[i].properties.visited = 1;
+                    } else {
+                        json.features[i].properties.visited = 0;
+                    }
+
+                    console.log(dataState, json.features[i].properties.visited);
+                }
+
+                // Bind the data to the SVG and create one path per GeoJSON feature
+                svgMap.selectAll("path")
+                    .data(json.features)
+                    .enter()
+                    .append("path")
+                    .attr("d", path)
+                    .style("stroke", "#fff")
+                    .style("stroke-width", "1")
+                    .on("click", function (d) {
+
+                        // make clicked state white
+                        d3.select(this).style("fill", "rgb(213,222,217)");
+
+                        if (stateSelected) {
+
+                            unemploymentRate = getAverageUnemployment(stateSelected);
+                            if (unemploymentRate > 7) {
+                                d3.select(`#${stateSelected.replace(/\s/g, '')}`).style("fill", "rgb(217, 91, 67)");
+                            } else if (unemploymentRate > 4) {
+                                d3.select(`#${stateSelected.replace(/\s/g, '')}`).style("fill", "rgb(84,36,55)");
+                            } else if (unemploymentRate > 0.01) {
+                                d3.select(`#${stateSelected.replace(/\s/g, '')}`).style("fill", "rgb(69,173,168)");
+                            }
+
+                        }
+                        // change color of state clicked
+                        //d3.select(this).style("fill", "rgb(213,222,217)");
+                        stateSelected = d.properties.name;
+                        drawUnemploymentOverTimeChart(d.properties.name);
+                    })
+                    .on("mouseover", function (d) {
+                        div.transition()
+                            .duration(200)
+                            .style("opacity", .9);
+                        div.text(d.properties.name)
+                            .style("left", (d3.event.pageX) + "px")
+                            .style("top", (d3.event.pageY - 28) + "px")
+                    })
+                    .attr("id", function (d) {
+                        return d.properties.name.replace(/\s/g, '');
+                    })
+                    .style("fill", function (d) {
+                        // Get data value
+                        var name = d.properties.name;
+
+                        unemploymentRate = getAverageUnemployment(name);
+
+                        if (unemploymentRate > 7) {
+                            return "rgb(217, 91, 67)";
+                        } else if (unemploymentRate > 4) {
+                            return "rgb(84,36,55)";
+                        } else if (unemploymentRate > 0.01) {
+                            return "rgb(69,173,168)";
+                        }
+
+                    });
+
+                // Modified Legend Code from Mike Bostock: http://bl.ocks.org/mbostock/3888852
+                var legend = d3.select("body").append("svg")
+                    .attr("class", "legend")
+                    .attr("width", 140)
+                    .attr("height", 200)
+                    .selectAll("g")
+                    .data(color.domain().slice().reverse())
+                    .enter()
+                    .append("g")
+                    .attr("transform", function (d, i) { return "translate(0," + i * 20 + ")"; });
+
+
+                legend.append("rect")
+                    .attr("width", 18)
+                    .attr("height", 18)
+                    .style("fill", color);
+
+
+                legend.append("text")
+                    .data(legendText)
+                    .attr("x", 24)
+                    .attr("y", 9)
+                    .attr("dy", ".35em")
+                    .text(function (d) { return d; });
+            });
+
+        });
+    </script>
+
+    <div id="chartContainer" style="height: 370px; width: 100%;"></div>
+
+    <a id="footer" href="https://www.epi.org/indicators/state-jobs/">Data from Economic Policy Institute</a>
+
+</body>
+
+</html>
