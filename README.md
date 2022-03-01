@@ -1,57 +1,23 @@
-OPTIONAL Assignment 4 - Brushing and Linking
-===
+### CS480X A4 - Visualizing Freedom Around the World
 
-The primary aim of this assignment is to showcase your **individual** skills at supporting interactive experiences with visualizations.
+This project focuses on visualizing a map of the world, looking at each country on a given freedom index as discussed in the dataset below from Tidy Tuesday:
 
-### Your Task
+https://github.com/rfordatascience/tidytuesday/tree/master/data/2022/2022-02-22
 
-Your task is to craft a visualization with a dataset of your choosing, and to specifically support brushing and linking of some kind to support exploration through two or more views of the data.
+This dataset rates each country on a scale from 1 to 7 in the categories of Political Rights and Civil Liberties (PR and CL), with 1 being the most free and 7 being the most oppressive. In order to compute a general freedom/oppression scale for each country I took the average of the two values for each country, rounded this to get a number from 1 to 7, and applied a shading to each country based on this number. In addition, the dataset also is divided by year, giving individual values for each year from 1995 to 2020. A slider on the page allows the user to see how the freedom scores in each country have changed over time.
 
-By linked views, we mean:
+![first screenshot](screen1.PNG)
 
-- Have at least two separate visualizations (likely separate SVGs), that visualize data, possibly with different techniques.
-- Linked views means that interacting in one updates the other, and vice versa. Think about the interaction flow that leads to good user experience and aligns with tasks you've identified.
+The second visualization applies to a single country, and this country can be selected by clicking on it on the map, adding interactivity. This second visualization shows a graph of the PR+CL oppression score over time over the entire period from 1995 to 2020, allowing trends for a single country to be easily visible.
 
-Examples of linked views include:
-- A large central map or scatterplot, with ancillary histograms that can be used to filter-- perhaps time or other dimensions
+![second screenshot](screen2.PNG)
 
+The project can be hosted on my Github Page at https://iancoolidge0.github.io/a4-LinkedViews/.
 
-Incorporating a brief writeup with your visualization is a good idea.
-Communicate what the original vision was, what the major issues were, and what new things can be seen with your multiple linked views.
+### Technical Achievements
 
-### More on Linking Views
-One of the most powerful techniques for mitigating the shortcomings of a given visualization is to link it with other views.
+I created a map using topojson, and also used a custom div to draw a stats box when the user mouses over a given country. In addition, my two graphs are interactive and clicking in one can change the display in the other. Another technical standout of this project was cross-referencing country names in two separate datasets -- the topojson world map and the freedom dataset itself.
 
-Linking a map to a bar or scatterplot, for instance, may allow you to overcome the shortcomings of a map.
+### Design Achievements
 
-In general, linking visualizations allows you to explore different parts of the data between views, and mitigates the shortcomings of a given view by pairing it with other views.
-
-For this assignment, we want to see at least two linked views, in that interactions in one view updates the other, and vice versa. Many multiple views visualizations use more than two views, so consider such directions as possibilities for tech/design achievements. Be sure to think about what views work best for given tasks, and try to iterate/prototype if possible.
-
-Requirements
----
-
-0. Your code should be forked from the GitHub repo and linked using GitHub pages.
-1. Your project should load a dataset you found on the web from the vis you're remixing. You may extract the data by sight if necessary. Put this file in your repo.
-2. Your project should use d3 to build a visualization of the dataset. 
-3. Your writeup (readme.md in the repo) should contain the following:
-
-- Working link to the visualization hosted on gh-pages or other external sources.
-- Concise description and screenshot of your visualization.
-- Description of the technical achievements you attempted with this visualization.
-- Description of the design achievements you attempted with this visualization.
-
-4. Submit a pull request and name it as follow
-```
-a4-your Gh username-your first name-your lastname
-
-```
-
-Extra Links
----
-
-- https://observablehq.com/@philippkoytek/d3-part-3-brushing-and-linking
-- https://bl.ocks.org/john-guerra/raw/2c00b2d675a6bf1c84a7b140f4536b0d/
-- https://github.com/d3/d3-brush
-- https://observablehq.com/collection/@d3/d3-brush
-- https://observablehq.com/@d3/focus-context?collection=@d3/d3-brush
+The two graphs use a similar color scheme to provide a cohesive experience for the viewer or user.

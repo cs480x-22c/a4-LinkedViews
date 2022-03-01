@@ -1,0 +1,243 @@
+<html>
+    <head>
+        <style>
+            div.tooltip {
+                position: absolute;
+                text-align: center;
+                padding: .3rem;
+                background: #FFFFFF;
+                color: #313639;
+                border: 1px solid #313639;
+                border-radius: 2px;
+                pointer-events: none;
+                font-size: 0.7rem;
+                font-family: Arial, Helvetica, sans-serif;
+            }
+        </style>
+
+        <script src="https://d3js.org/d3.v6.min.js"></script>
+        <script src="topojson.min.js"></script>
+        <script>
+            var width = 960, height = 500;
+            var svg, proj, path, mouseoverDiv;
+
+            var graphSVG;
+
+            var freedomData;
+            var worldData;
+
+            var selectedCountry = "United States of America";
+
+            // augmented from https://www.schemecolor.com/duplicate-the-sea.php
+            var colorPalette = ["#053885", "#0645A4", "#2480CD", "#509BDE", "#84BCF3", "#B7D6F7", "#D7E9FE"];
+
+            function startup() {
+                // setup initial SVG and projection
+                svg = d3.select("#container")
+                    .append("svg")
+                    .attr("width", 960)
+                    .attr("height", 500)
+                    .style("border-style", "solid");
+
+                proj = d3.geoMercator()
+                    .scale(130)
+                    .translate([width / 2, height / 2 + 50]);
+                path = d3.geoPath().projection(proj);
+
+                mouseoverDiv = d3.select("body").append("div")
+                    .attr("class", "tooltip")
+                    .style("opacity", 0);
+
+                // load data and run the world update for the first time
+                d3.csv("freedom.csv")
+                .then(freedom => {
+                        freedomData = freedom;
+                        d3.json("world-countries.json")
+                        .then(world => {
+                            worldData = world;
+                            update();
+                        });
+                });
+
+                // add the legend
+                svg.selectAll("color")
+                    .data(colorPalette)
+                    .enter()
+                    .append("rect")
+                        .attr("x", 920)
+                        .attr("y", (d, i) => 150 + 25 * i)
+                        .attr("width", 25)
+                        .attr("height",  25)
+                        .attr("stroke", "#000000")
+                        .attr("fill", d => d);
+
+                svg.append("text")
+                    .attr("x", 910)
+                    .attr("y", 145)
+                    .attr("font-size", 10)
+                    .style("font-family", "Arial, Helvetica, sans-serif")
+                    .text("Least free");
+
+                svg.append("text")
+                    .attr("x", 912)
+                    .attr("y", 338)
+                    .attr("font-size", 10)
+                    .style("font-family", "Arial, Helvetica, sans-serif")
+                    .text("Most free");
+
+                // add the graph visualization at the bottom
+                graphSVG = d3.select("#graphContainer")
+                    .append("svg")
+                    .attr("width", 500)
+                    .attr("height", 500)
+                    .style("border-style", "solid");
+
+                graphSVG.append("text")
+                    .attr("x", 250)
+                    .attr("y", 480)
+                    .style("text-anchor", "middle")
+                    .style("font-family", "Arial, Helvetica, sans-serif")
+                    .attr("font-size", 12)
+                    .text("Year");
+
+                graphSVG.append("text")
+                    .attr("x", 15)
+                    .attr("y", 250)
+                    .style("text-anchor", "middle")
+                    .style("font-family", "Arial, Helvetica, sans-serif")
+                    .attr("font-size", 12)
+                    .attr("transform", "translate(15,250)rotate(-90)translate(-15,-250)")
+                    .text("Aggregate Oppression Index (CL + PR)");
+            }
+
+            function update() {
+                var currentP = document.getElementById("currentYear");
+                var year = document.getElementById("currentSlider").value;
+                currentP.innerHTML = "Year shown: " + year; 
+                
+                d3.selectAll("path").remove();
+
+                svg.append("g")
+                    .selectAll("path")
+                    .data(worldData.features)
+                    .enter()
+                    .append("path")
+                        .attr("d", path)
+                        .attr("fill", d => {
+                            let freedomResult = freedomData.filter(element => {
+                                return element.year === year && (element.country === d.properties.name);
+                            });
+
+                            if(freedomResult.length === 0) {
+                                return "#FFFFFF"; // no freedom data on this country
+                            }
+
+                            d.CL = parseInt(freedomResult[0].CL);
+                            d.PR = parseInt(freedomResult[0].PR);
+
+                            let freedomIndex = Math.round((parseInt(freedomResult[0].PR) + parseInt(freedomResult[0].CL)) / 2) - 1;
+                            return colorPalette[6 - freedomIndex];
+                        })
+                        .attr("stroke-width", d => {
+                            if(d.properties.name === selectedCountry) {
+                                return 2;
+                            } else {
+                                return 0;
+                            }
+                        })
+                        .attr("stroke", "#000000")
+                        .on("mouseover", (e, d) => {
+                            if(d.PR === undefined) return;
+
+                            mouseoverDiv.transition()
+                                .duration(50)
+                                .style("opacity", 1.0);
+
+                            mouseoverDiv.html(d.properties.name + "<br />" + "Civil Liberties: " + d.CL + "<br />" + "Political Rights: " + d.PR)
+                                .style("left", (e.pageX + 10) + "px")
+                                .style("top",  (e.pageY - 15) + "px");
+                        })
+                        .on("mouseout", (e, d) => {
+                            mouseoverDiv.transition()
+                                .duration(50)
+                                .style("opacity", 0.0);
+                        })
+                        .on("mousedown", (e, d) => {
+                            if(d.PR === undefined) return;
+
+                            selectedCountry = d.properties.name;
+                            update();
+                        });
+
+                updateGraph();
+            }
+
+            function updateGraph() {
+                let graphData = freedomData.filter(element => {
+                    return element.country === selectedCountry;
+                }).sort((e1, e2) => e1.year - e2.year);
+
+                let x = d3.scaleTime()
+                    .domain([new Date(1995, 0, 1), new Date(2020, 0, 1)])
+                    .range([50, 450]);
+                graphSVG.append("g")
+                    .attr("transform", "translate(0,450)")
+                    .call(d3.axisBottom(x));
+
+                let y = d3.scaleLinear()
+                    .domain([7, 0])
+                    .range([50, 450]);
+                graphSVG.append("g")
+                    .attr("transform", "translate(50,0)")
+                    .call(d3.axisLeft(y).tickValues([1,2,3,4,5,6,7]));
+                graphSVG.append("path")
+                    .datum(graphData)
+                    .attr("fill", "none")
+                    .attr("stroke", colorPalette[0])
+                    .attr("stroke-width", 2)
+                    .attr("d", d3.line()
+                        .x(d => x(new Date(d.year, 0, 1)))
+                        .y(d => {
+                            return y((parseInt(d.CL) + parseInt(d.PR)) / 2);
+                        }
+                        ));
+
+                // update text in graph
+                graphSVG.selectAll("#graphHeader").remove();
+
+                graphSVG.append("text")
+                    .attr("x", 250)
+                    .attr("y", 25)
+                    .attr("id", "graphHeader")
+                    .style("text-anchor", "middle")
+                    .style("font-family", "Arial, Helvetica, sans-serif")
+                    .attr("font-size", 20)
+                    .text(selectedCountry);
+            }
+           
+        </script>
+        </head>
+        <body onload="startup();">
+        <div id="headerContainer" style="text-align: center;">
+            <h1>Visualizing Freedom Around the World</h1>
+            <p style="margin: 0 auto; width: 50%;">
+                This multi-part visualization shows an aggregate freedom index for each country around the world. Each country is rated on a scale from 1-7 in the categories of Political Rights and Civil Liberties, with 1 being Most Free and 7 being Least Free. An average of the two determines the shade of a country. Moving the slider views the world at any year from 1995 to 2020, and clicking on a country will show a graph of that individiual country's freedom over the last 25 years.
+            </p>
+        </div>
+        <br />
+        <div id="container" style="text-align: center;">
+
+        </div>
+        <br />
+        <div id="sliderContainer" style="text-align: center;">
+            1995
+            <input type="range" min="1995" max="2020" class="slider" id="currentSlider" style="width: 50%;" onchange="update();">
+            2020
+            <br />
+            <p id="currentYear"></p>
+        </div>
+        <div id="graphContainer" style="text-align: center;">
+            
+        </div>
+    </body>
+</html>
