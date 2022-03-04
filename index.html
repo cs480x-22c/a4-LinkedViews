@@ -1,0 +1,228 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+    <style>
+      /* set the CSS */
+
+      .line {
+        fill: none;
+        stroke: steelblue;
+        stroke-width: 2px;
+      }
+    </style>
+    <link rel="stylesheet" type="text/css" href="style.css" />
+  </head>
+  <body>
+    <div id="my_dataviz"></div>
+    <!-- load the d3.js library -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/d3/7.3.0/d3.min.js"></script>
+    <script>
+      svgHeight = 600;
+      svgWidth = 600;
+      height = 200 + 2 * svgHeight;
+      width = 3 * svgWidth;
+      var dots;
+      d3.select("body").attr("height", height).attr("width", width);
+
+      d3.select("body")
+        .append("svg")
+        .attr("x", 0)
+        .attr("y", 0)
+        .attr("width", width)
+        .attr("height", 100)
+        .append("text")
+        .attr("x", 0)
+        .attr("y", 50)
+        .attr("dy", ".35em")
+        .text("Brushing And Linking ");
+      d3.select("body")
+        .append("svg")
+        .attr("x", 0)
+        .attr("y", 100)
+        .attr("width", width)
+        .attr("height", 100);
+      for (let i = 0; i < 1; i++) {
+        d3.select("body")
+          .append("svg")
+          .attr("x", function () {
+            if (i == 0 || i == 3) return 0;
+            if (i == 1 || i == 4) return svgWidth;
+            if (i == 2 || i == 5) return 2 * svgWidth;
+          })
+          .attr("y", function () {
+            if (i == 0 || i == 1 || i == 2) return 200;
+            if (i == 3 || i == 4 || i == 5) return 200 + svgHeight;
+          })
+          .attr("width", svgWidth)
+          .attr("height", svgHeight)
+          .attr("id", function () {
+            return "svg" + i;
+          });
+      }
+
+      d3.select("#svg0")
+        .append("rect")
+        .attr("x", 0)
+        .attr("y", 00)
+        .attr("height", svgHeight)
+        .attr("width", svgWidth)
+        .attr("stroke", "black")
+        .attr("fill", "white");
+
+      // Add the valueline path.
+      // set the dimensions and margins of the graph
+      var margin = { top: 20, right: 20, bottom: 20, left: 20 },
+        width = width - margin.left - margin.right,
+        height = height - margin.top - margin.bottom;
+
+      // parse the date / time
+      var parseTime = d3.timeParse("%d-%b-%y");
+
+      // set the ranges
+      var x = d3.scaleTime().range([0, width]);
+      var y = d3.scaleLinear().range([height, 0]);
+
+      let songData = [];
+      let temp = [];
+      let input2 = [];
+
+      // Get the data
+      d3.csv("clean_data_file.csv").then(function (data) {
+        console.log(data);
+
+        data.forEach((element, index) => {
+          data[index].position = index;
+          songData.push(data[index]);
+        });
+
+        // Scale the range of the data
+        x.domain(
+          d3.extent(data, function (d) {
+            return d.position * 3.0;
+          })
+        );
+        y.domain([
+          0,
+          d3.max(data, function (d) {
+            return d.danceability;
+          }),
+        ]);
+
+        // Add the scatterplot
+        dots = d3
+          .select("#svg0")
+          .selectAll("dot")
+          .data(data)
+          .enter()
+          .append("g")
+          .append("circle")
+          .attr("r", 3)
+          .attr("cx", function (d) {
+            return x(d.position);
+          })
+          .attr("cy", function (d) {
+            return y(d.danceability);
+          })
+          .style("stroke", "red") // Noelle
+          .style("fill", "red") // Noelle
+          .style("opacity", 0.5)
+          .on("click", function (event) {
+            console.log("click happened");
+            console.log(event);
+            console.log(this.__data__);
+            alert("The artist is " + this.__data__.artist);
+          });
+
+        // Add the X Axis
+        d3.select("#svg0")
+          .append("g")
+          .attr("transform", "translate(10," + height + ")")
+          .call(d3.axisBottom(x));
+
+        // Add the Y Axis
+        d3.select("#svg0")
+          .append("g")
+          .attr("transform", "translate(10" + height + ")")
+          .call(d3.axisLeft(y));
+
+        dots = d3
+          .select("#svg0")
+          .selectAll("dot")
+          .data(data)
+          .enter()
+          .append("g")
+          .append("circle")
+          .attr("r", 8)
+          .attr("cx", function (d) {
+            return x(d.position);
+          })
+          .attr("cy", function (d) {
+            return y(d.danceability);
+          })
+          .style("stroke", "red") // Noelle
+          .style("fill", "red") // Noelle
+          .style("opacity", 0.5)
+          .on("click", function (event) {
+            console.log("click happened");
+            console.log(event);
+            console.log(this.__data__);
+            alert("The artist is " + this.__data__.artist);
+          });
+
+        // Add the X Axis
+        d3.select("#svg0")
+          .append("g")
+          .attr("transform", "translate(10," + height + ")")
+          .call(d3.axisBottom(x));
+
+        // Add the Y Axis
+        d3.select("#svg0")
+          .append("g")
+          .attr("transform", "translate(10" + height + ")")
+          .call(d3.axisLeft(y));
+        // // Noelle
+        d3.select("#svg0").call(
+          d3
+            .brush()
+            .extent([
+              [0, 0],
+              [svgWidth, svgHeight],
+            ])
+            .on("start end", (event) => updateChart(event))
+        );
+
+        function updateChart(event) {
+          extent = event.selection;
+          // console.log(d3.select(dots));
+
+          dots._groups[0].forEach((dot) => {
+            //console.log(dot);
+            aDot = d3.select(dot);
+            if (
+              aDot.attr("cx") >= extent[0][0] &&
+              aDot.attr("cx") <= extent[1][0] &&
+              aDot.attr("cy") >= extent[0][1] &&
+              aDot.attr("cy") <= extent[1][1]
+            ) {
+              // cx >= [0][0] cx <= [1][0] cy >= [0][1] cy <= [1][1]
+              //console.log("in the brush");
+              //console.log(dot.__data__.artist);
+              //console.log("This is  " + dot.__data__.artist);
+              temp = dot.__data__.danceability;
+
+              if (temp == null) {
+              } else {
+                input2.push(temp);
+              }
+              // Getting sum of numbers
+              aDot.transition().duration(200).style("fill", "blue");
+            } else {
+              aDot.transition().duration(200).style("fill", "red");
+            }
+          });
+        }
+      });
+    </script>
+  </body>
+</html>
