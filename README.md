@@ -13,7 +13,7 @@ https://juniorjedi490.github.io/a4-LinkedViews/
 
 ### Sample screenshot
 
-![Screenie](sample-screenshot.png)
+![Screenie](sample_screenshot.png)
 
 ### Technical achievements
 - Ported the class used to construct Minecraft's biome source to JavaScript.
