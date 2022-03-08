@@ -19,7 +19,7 @@ https://juniorjedi490.github.io/a4-LinkedViews/
 - Ported the class used to construct Minecraft's biome source to JavaScript.
 
 ### Design achievements
-- The user can toggle between 2 color palettes: my personal custom one (referred to as "jj" in this project), and the one used in the seed mapping programs Amidst and Chunkbase.
+- The user can toggle between 2 color palettes: my personal custom one (referred to as "jj" in this project), and the one used in the seed mapping programs Amidst and Chunkbase. (The color change button is at the far bottom left)
 - Noise values are displayed in the abstracted form shown in the game's debug screen.
 
 ### Works cited
