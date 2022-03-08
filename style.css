@@ -1,0 +1,19 @@
+* {
+	font-family: "Calibri", "Arial", sans-serif;
+}
+
+.row-header-right {
+	text-align: left;
+}
+
+.charts {
+	text-align: center;
+}
+
+.section-header {
+	font-weight: bold;
+}
+
+.colheader {
+	text-align: center;
+}
