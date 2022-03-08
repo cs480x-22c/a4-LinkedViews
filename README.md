@@ -1,57 +1,27 @@
-OPTIONAL Assignment 4 - Brushing and Linking
-===
+In Minecraft 1.18 (Caves and Cliffs update part 2), Mojang completely overhauled the way the terrain is generated.
 
-The primary aim of this assignment is to showcase your **individual** skills at supporting interactive experiences with visualizations.
+To summarize, terrain height is calculated by combining three Perlin Noise functions: Peaks and Valleys (P/V), Continentalness, and Erosion, each of which is also modified using a spline function.
 
-### Your Task
+In addition, a similar method is used to determine which biome an area is classified as. (That is what this project is focused on.)
 
-Your task is to craft a visualization with a dataset of your choosing, and to specifically support brushing and linking of some kind to support exploration through two or more views of the data.
+Biome placement is determined using the same noise functions - P/V, Continentalness, and Erosion - as terrain, alongside two more noise functions (Temperature and Humidity), plus a "Depth" parameter, which I am assuming refers to how far beneath the surface you are.
 
-By linked views, we mean:
+This page allows you to change the P/V, Continentalness, Erosion, Temperature, Humidity, and Depth values freely, and see which biome results. The visualization is the grid of maps at the bottom, which show biomes that differ from the current one in up to 2 noise parameters.
 
-- Have at least two separate visualizations (likely separate SVGs), that visualize data, possibly with different techniques.
-- Linked views means that interacting in one updates the other, and vice versa. Think about the interaction flow that leads to good user experience and aligns with tasks you've identified.
+### Project link
+https://juniorjedi490.github.io/a4-LinkedViews/
 
-Examples of linked views include:
-- A large central map or scatterplot, with ancillary histograms that can be used to filter-- perhaps time or other dimensions
+### Sample screenshot
 
+![Screenie](sample-screenshot.png)
 
-Incorporating a brief writeup with your visualization is a good idea.
-Communicate what the original vision was, what the major issues were, and what new things can be seen with your multiple linked views.
+### Technical achievements
+- Ported the class used to construct Minecraft's biome source to JavaScript.
 
-### More on Linking Views
-One of the most powerful techniques for mitigating the shortcomings of a given visualization is to link it with other views.
+### Design achievements
+- The user can toggle between 2 color palettes: my personal custom one (referred to as "jj" in this project), and the one used in the seed mapping programs Amidst and Chunkbase.
+- Noise values are displayed in the abstracted form shown in the game's debug screen.
 
-Linking a map to a bar or scatterplot, for instance, may allow you to overcome the shortcomings of a map.
-
-In general, linking visualizations allows you to explore different parts of the data between views, and mitigates the shortcomings of a given view by pairing it with other views.
-
-For this assignment, we want to see at least two linked views, in that interactions in one view updates the other, and vice versa. Many multiple views visualizations use more than two views, so consider such directions as possibilities for tech/design achievements. Be sure to think about what views work best for given tasks, and try to iterate/prototype if possible.
-
-Requirements
----
-
-0. Your code should be forked from the GitHub repo and linked using GitHub pages.
-1. Your project should load a dataset you found on the web from the vis you're remixing. You may extract the data by sight if necessary. Put this file in your repo.
-2. Your project should use d3 to build a visualization of the dataset. 
-3. Your writeup (readme.md in the repo) should contain the following:
-
-- Working link to the visualization hosted on gh-pages or other external sources.
-- Concise description and screenshot of your visualization.
-- Description of the technical achievements you attempted with this visualization.
-- Description of the design achievements you attempted with this visualization.
-
-4. Submit a pull request and name it as follow
-```
-a4-your Gh username-your first name-your lastname
-
-```
-
-Extra Links
----
-
-- https://observablehq.com/@philippkoytek/d3-part-3-brushing-and-linking
-- https://bl.ocks.org/john-guerra/raw/2c00b2d675a6bf1c84a7b140f4536b0d/
-- https://github.com/d3/d3-brush
-- https://observablehq.com/collection/@d3/d3-brush
-- https://observablehq.com/@d3/focus-context?collection=@d3/d3-brush
+### Works cited
+Video on terrain generation by Minecraft developer Henrik Kniberg: https://www.youtube.com/watch?v=CSa5O6knuwI
+Slider code comes from this demo: https://bl.ocks.org/johnwalley/e1d256b81e51da68f7feb632a53c3518
