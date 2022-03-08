@@ -23,5 +23,5 @@ https://juniorjedi490.github.io/a4-LinkedViews/
 - Noise values are displayed in the abstracted form shown in the game's debug screen.
 
 ### Works cited
-Video on terrain generation by Minecraft developer Henrik Kniberg: https://www.youtube.com/watch?v=CSa5O6knuwI
-Slider code comes from this demo: https://bl.ocks.org/johnwalley/e1d256b81e51da68f7feb632a53c3518
+- Video on terrain generation by Minecraft developer Henrik Kniberg: https://www.youtube.com/watch?v=CSa5O6knuwI
+- Slider code comes from this demo: https://bl.ocks.org/johnwalley/e1d256b81e51da68f7feb632a53c3518
