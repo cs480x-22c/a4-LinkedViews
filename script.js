@@ -161,6 +161,8 @@ function getParameterBinLabel(noisePoint, paramIndex) {
 			return "Surface";
 		} else if (param_bins[paramIndex][1] >= noisePoint[paramIndex]) {
 			return "Cave";
+		} else if (param_bins[paramIndex][3] < noisePoint[paramIndex]) {
+			return "Deep";
 		} else {
 			return "Surface";
 		}
