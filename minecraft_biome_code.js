@@ -1,14 +1,17 @@
 const param_bins = [
-	[-.93333334, -.7666667, -.56666666, -.4, -.26666668, -.05, .05, .26666668, .4, .56666666, .7666667, .93333334],
-	[-1.05, -.455, -.19, -.11, .03, .3, .8],
-	[-.78, -.375, -.2225, .05, .45, .55],
-	[-.45, -.15, .2, .55],
-	[-.35, -.1, .1, .3, .7],
-	[.2, .9]
+	[-.93333334, -.7666667, -.56666666, -.4, -.26666668, -.05, .05, .26666668, .4, .56666666, .7666667, .93333334], // P/V
+	[-1.05, -.455, -.19, -.11, .03, .3, .8], // Continentalness
+	[-.78, -.375, -.2225, .05, .45, .55], // Erosion
+	[-.45, -.15, .2, .55], // Temperature
+	[-.35, -.1, .1, .3, .7], // Humidity
+	[.2, .9, 1.0, 1.1] // Depth
 ];
 
 function getBiome(noisePoint) {
-	if (noisePoint[5] >= param_bins[5][0] && noisePoint[5] < param_bins[5][1] && noisePoint[4] >= param_bins[4][4]) {
+	if (noisePoint[5] >= param_bins[5][3] && noisePoint[2] < param_bins[2][1]) {
+		return "Deep Dark";
+	}
+	else if (noisePoint[5] >= param_bins[5][0] && noisePoint[5] < param_bins[5][1] && noisePoint[4] >= param_bins[4][4]) {
 		return "Lush Caves";
 	}
 	else if (noisePoint[5] >= param_bins[5][0] && noisePoint[5] < param_bins[5][1] && noisePoint[1] >= param_bins[1][6]) {
@@ -211,8 +214,10 @@ function getMidBiome(noisePoint, special) {
 		} else if (noisePoint[3] < param_bins[3][0]) {
 			// frozen
 			return getRegularBiome(noisePoint, special);
-		} else {
+		} else if (noisePoint[3] < param_bins[3][2]) {
 			return "Swamp";
+		} else {
+			return "Mangrove Swamp";
 		}
 	}
 	return "The Void";
@@ -255,8 +260,10 @@ function getLowBiome(noisePoint, special) {
 		} else if (noisePoint[3] < param_bins[3][0]) {
 			// frozen
 			return getRegularBiome(noisePoint, special);
-		} else {
+		} else if (noisePoint[3] < param_bins[3][2]) {
 			return "Swamp";
+		} else {
+			return "Mangrove Swamp";
 		}
 	}
 	return "The Void";
@@ -270,7 +277,11 @@ function getValleyBiome(noisePoint, special) {
 	} else if (noisePoint[3] < param_bins[3][0]) {
 		return "Frozen River";
 	} else if (noisePoint[2] >= param_bins[2][5] && noisePoint[1] >= param_bins[1][3]) {
-		return "Swamp";
+		if (noisePoint[3] < param_bins[3][2]) {
+			return "Swamp";
+		} else {
+			return "Mangrove Swamp";
+		}
 	} else {
 		return "River";
 	}
@@ -306,9 +317,9 @@ function getBadlandsOrBiome(noisePoint, special) {
 }
 
 function getBadlandsBiome(noisePoint, special) {
-	if (noisePoint[4] >= param_bins[4][2]) {
+	if (noisePoint[4] >= param_bins[4][3]) {
 		return "Wooded Badlands";
-	} else if (noisePoint[4] < param_bins[4][1] && !special) {
+	} else if (noisePoint[4] < param_bins[4][2] && !special) {
 		return "Eroded Badlands";
 	} else {
 		return "Badlands";
@@ -316,7 +327,7 @@ function getBadlandsBiome(noisePoint, special) {
 }
 
 function getWindsweptSavannaOrBiome(noisePoint, special, otherBiome) {
-	if (special && noisePoint[3] >= param_bins[3][2] && noisePoint[4] < param_bins[4][3]) {
+	if (special && noisePoint[3] >= param_bins[3][1] && noisePoint[4] < param_bins[4][4]) {
 		return "Windswept Savanna";
 	} else {
 		return otherBiome(noisePoint, special);
@@ -374,8 +385,8 @@ const nearMountainBiomes = [
 ];
 const specialNearMountainBiomes = [
 	["Ice Spikes", null, null, null, null],
-	[null, null, "Meadow", "Meadow", "Old Growth Pine Taiga"],
-	[null, null, "Forest", "Birch Forest", null],
+	["Cherry Grove", null, "Meadow", "Meadow", "Old Growth Pine Taiga"],
+	["Cherry Grove", "Cherry Grove", "Forest", "Birch Forest", null],
 	[null, null, null, null, null],
 	["Eroded Badlands", "Eroded Badlands", null, null, null]
 ];
