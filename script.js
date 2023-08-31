@@ -233,17 +233,17 @@ function update_charts() {
 					.attr("width", (d) => (convert(getUpperBound(d,j)) - convert(getLowerBound(d,j))))
 					.attr("height", (d) => (convert(getUpperBound(d,i)) - convert(getLowerBound(d,i))))
 					.append("title")
-					.html((d) => {
+					.on('click', (d) => {
+						params[i] = d[i];
+						params[j] = d[j];
+						update_charts();
+					}).html((d) => {
 						let tooltip = "Noise:\n";
 						for (let i = 0; i < 6; ++i) {
 							tooltip += "  " + param_names[i] + ": " + describeParameterBin(d,i);
 						}
 						tooltip += "Biome: " + getBiome(d);
 						return tooltip;
-					}).on('click', (d) => {
-						params[i] = d[i];
-						params[j] = d[j];
-						update_charts();
 					});
 			}
 		}
