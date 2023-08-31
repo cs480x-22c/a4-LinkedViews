@@ -232,12 +232,12 @@ function update_charts() {
 					.attr("y", (d) => convert(getLowerBound(d,i)))
 					.attr("width", (d) => (convert(getUpperBound(d,j)) - convert(getLowerBound(d,j))))
 					.attr("height", (d) => (convert(getUpperBound(d,i)) - convert(getLowerBound(d,i))))
-					.append("title")
 					.on('click', (d) => {
 						params[i] = d[i];
 						params[j] = d[j];
 						update_charts();
-					}).html((d) => {
+					}).append("title")
+					.html((d) => {
 						let tooltip = "Noise:\n";
 						for (let i = 0; i < 6; ++i) {
 							tooltip += "  " + param_names[i] + ": " + describeParameterBin(d,i);
