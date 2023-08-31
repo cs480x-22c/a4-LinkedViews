@@ -4,7 +4,7 @@ To summarize, terrain height is calculated by combining three Perlin Noise funct
 
 In addition, a similar method is used to determine which biome an area is classified as. (That is what this project is focused on.)
 
-Biome placement is determined using the same noise functions - P/V, Continentalness, and Erosion - as terrain, alongside two more noise functions (Temperature and Humidity), plus a "Depth" parameter, which I am assuming refers to how far beneath the surface you are.
+Biome placement is determined using the same noise functions - P/V, Continentalness, and Erosion - as terrain, alongside two more noise functions (Temperature and Humidity). Cave biomes also use Depth, which starts at 0 on the world surface and increases by 1/128 every block traveled downward.
 
 This page allows you to change the P/V, Continentalness, Erosion, Temperature, Humidity, and Depth values freely, and see which biome results. The visualization is the grid of maps at the bottom, which show biomes that differ from the current one in up to 2 noise parameters.
 
