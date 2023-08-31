@@ -237,7 +237,7 @@ function update_charts() {
 						params[j] = d[j];
 						update_charts();
 						d3.select(this).style("fill","yellow");*/
-						//console.log('clicked something');
+						console.log('clicked something');
 					}).append("title")
 					.html((d) => {
 						let tooltip = "Noise:\n";
