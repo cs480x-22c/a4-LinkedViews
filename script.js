@@ -232,11 +232,15 @@ function update_charts() {
 					.attr("y", (d) => convert(getLowerBound(d,i)))
 					.attr("width", (d) => (convert(getUpperBound(d,j)) - convert(getLowerBound(d,j))))
 					.attr("height", (d) => (convert(getUpperBound(d,i)) - convert(getLowerBound(d,i))))
-					.on('click', (d) => {
+					.on('click', (e, d, c, b, a) => {
 						/*params[i] = d[i];
 						params[j] = d[j];
 						update_charts();*/
+						console.log(e);
 						console.log(d);
+						console.log(c);
+						console.log(b);
+						console.log(a);
 					}).append("title")
 					.html((d) => {
 						let tooltip = "Noise:\n";
