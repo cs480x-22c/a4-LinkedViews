@@ -240,6 +240,10 @@ function update_charts() {
 						}
 						tooltip += "Biome: " + getBiome(d);
 						return tooltip;
+					}).on('click', (d) => {
+						params[i] = d[i];
+						params[j] = d[j];
+						update_charts();
 					});
 			}
 		}
