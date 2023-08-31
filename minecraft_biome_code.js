@@ -49,31 +49,31 @@ function getBiome(noisePoint) {
 	} else {
 		// Land biomes
 		if (noisePoint[0] < param_bins[0][0]) {
-			return getMidBiome(noisePoint, true);
+			return getMidBiome(noisePoint, false);
 		} else if (noisePoint[0] < param_bins[0][1]) {
-			return getHighBiome(noisePoint, true);
+			return getHighBiome(noisePoint, false);
 		} else if (noisePoint[0] < param_bins[0][2]) {
-			return getPeakBiome(noisePoint, true);
-		} else if (noisePoint[0] < param_bins[0][3]) {
-			return getHighBiome(noisePoint, true);
-		} else if (noisePoint[0] < param_bins[0][4]) {
-			return getMidBiome(noisePoint, true);
-		} else if (noisePoint[0] < param_bins[0][5]) {
-			return getLowBiome(noisePoint, true);
-		} else if (noisePoint[0] < param_bins[0][6]) {
-			return getValleyBiome(noisePoint, false);
-		} else if (noisePoint[0] < param_bins[0][7]) {
-			return getLowBiome(noisePoint, false);
-		} else if (noisePoint[0] < param_bins[0][8]) {
-			return getMidBiome(noisePoint, false);
-		} else if (noisePoint[0] < param_bins[0][9]) {
-			return getHighBiome(noisePoint, false);
-		} else if (noisePoint[0] < param_bins[0][10]) {
 			return getPeakBiome(noisePoint, false);
-		} else if (noisePoint[0] < param_bins[0][11]) {
+		} else if (noisePoint[0] < param_bins[0][3]) {
 			return getHighBiome(noisePoint, false);
-		} else {
+		} else if (noisePoint[0] < param_bins[0][4]) {
 			return getMidBiome(noisePoint, false);
+		} else if (noisePoint[0] < param_bins[0][5]) {
+			return getLowBiome(noisePoint, false);
+		} else if (noisePoint[0] < param_bins[0][6]) {
+			return getValleyBiome(noisePoint, true);
+		} else if (noisePoint[0] < param_bins[0][7]) {
+			return getLowBiome(noisePoint, true);
+		} else if (noisePoint[0] < param_bins[0][8]) {
+			return getMidBiome(noisePoint, true);
+		} else if (noisePoint[0] < param_bins[0][9]) {
+			return getHighBiome(noisePoint, true);
+		} else if (noisePoint[0] < param_bins[0][10]) {
+			return getPeakBiome(noisePoint, true);
+		} else if (noisePoint[0] < param_bins[0][11]) {
+			return getHighBiome(noisePoint, true);
+		} else {
+			return getMidBiome(noisePoint, true);
 		}
 	}
 	// If nothing was selected
@@ -319,7 +319,7 @@ function getBadlandsOrBiome(noisePoint, special) {
 function getBadlandsBiome(noisePoint, special) {
 	if (noisePoint[4] >= param_bins[4][3]) {
 		return "Wooded Badlands";
-	} else if (noisePoint[4] < param_bins[4][2] && !special) {
+	} else if (noisePoint[4] < param_bins[4][2] && special) {
 		return "Eroded Badlands";
 	} else {
 		return "Badlands";
