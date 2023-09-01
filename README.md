@@ -1,3 +1,5 @@
+This project originated as my submission to an assignment from an Intro to Data Visualization class. This is the version that is updated to Minecraft 1.20. The original submission is archived in the "original-assignment-archive" branch.
+
 In Minecraft 1.18 (Caves and Cliffs update part 2), Mojang completely overhauled the way the terrain is generated.
 
 To summarize, terrain height is calculated by combining three Perlin Noise functions: Peaks and Valleys (P/V), Continentalness, and Erosion, each of which is also modified using a spline function.
