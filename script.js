@@ -161,6 +161,8 @@ function getParameterBinLabel(noisePoint, paramIndex) {
 			return "Surface";
 		} else if (param_bins[paramIndex][1] >= noisePoint[paramIndex]) {
 			return "Cave";
+		} else if (param_bins[paramIndex][3] < noisePoint[paramIndex]) {
+			return "Deep";
 		} else {
 			return "Surface";
 		}
@@ -224,13 +226,21 @@ function update_charts() {
 					.selectAll("biomes")
 					.data(points)
 					.join("rect")
-					.style("stroke", "none")
+					.style("stroke", (d) => {
+						if (params[i] >= getLowerBound(d,i) && params[i] <= getUpperBound(d,j)
+						    && params[j] >= getLowerBound(d,j) && params[j] <= getLowerBound(d,j))
+						{ return "black"; } else { return "none"; }})
 					.style("fill", (d) => useAmidstColors ? getAmidstColor(getBiome(d)) : getJjColor(getBiome(d)))
 					.attr("x", (d) => axis_width + convert(getLowerBound(d,j)))
 					.attr("y", (d) => convert(getLowerBound(d,i)))
 					.attr("width", (d) => (convert(getUpperBound(d,j)) - convert(getLowerBound(d,j))))
 					.attr("height", (d) => (convert(getUpperBound(d,i)) - convert(getLowerBound(d,i))))
-					.append("title")
+					.on('click', (e, d) => {
+						// e is the click event
+						params[i] = d[i];
+						params[j] = d[j];
+						update_charts();
+					}).append("title")
 					.html((d) => {
 						let tooltip = "Noise:\n";
 						for (let i = 0; i < 6; ++i) {
