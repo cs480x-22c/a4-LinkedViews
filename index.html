@@ -1,0 +1,109 @@
+<!DOCTYPE html>
+<head>
+	<meta charset="utf-8" />
+	<!--<meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no" />-->
+	<title>Minecraft 1.20 overworld biome explorer</title>
+	<script src="https://d3js.org/d3.v6.min.js"></script>
+	<script src="https://unpkg.com/d3-simple-slider"></script>
+	<link href="style.css" rel="stylesheet" />
+</head>
+<body>
+	<h1> Minecraft 1.20 overworld biome explorer </h1>
+
+	<table id="current-noise"> <tbody>
+		<tr> <td class="section-header"> Current noise: </td> <td></td> <td></td> </tr>
+		<tr> <td class="row-header"> &nbsp; &nbsp; P/V: </td> <td> <div id="slider-pv"></div> </td> <td id="current-pv"> </td> </tr>
+		<tr> <td class="row-header"> &nbsp; &nbsp; Continentalness: </td> <td> <div id="slider-c"></div> </td> <td id="current-c"> </td> </tr>
+		<tr> <td class="row-header"> &nbsp; &nbsp; Erosion: </td> <td> <div id="slider-e"></div> </td> <td id="current-e"> </td> </tr>
+		<tr> <td class="row-header"> &nbsp; &nbsp; Temperature: </td> <td> <div id="slider-t"></div> </td> <td id="current-t"> </td> </tr>
+		<tr> <td class="row-header"> &nbsp; &nbsp; Humidity: </td> <td> <div id="slider-h"></div> </td> <td id="current-h"> </td> </tr>
+		<tr> <td class="row-header"> &nbsp; &nbsp; Depth: </td> <td> <div id="slider-y"></div> </td> <td id="current-y"> </td> </tr>
+		<tr> </tr>
+		<tr>
+			<td class="section-header"> Current biome: </td>
+			<td></td>
+			<td>
+				<svg width=10 height=10 id="current-color"> <rect x=0 y=0 width=10 height=10> </rect> </svg>
+				<g id="current-biome"> Plains </g>
+			</td>
+		</tr>
+	</tbody> </table>
+	<br>
+	<table id="charts">	<tbody>
+		<tr id="sliders">
+			<td> <h2 class="colheader"> P/V </h2> </td>
+			<td> <h2 class="colheader"> Continentalness </h2> </td>
+			<td> <h2 class="colheader"> Erosion </h2> </td>
+			<td> <h2 class="colheader"> Temperature </h2> </td>
+			<td> <h2 class="colheader"> Humidity </h2> </td>
+			<td> <h2 class="colheader"> Depth </h2> </td>
+			<td></td>
+		</tr>
+		<tr>
+			<td> <svg id="graph-pv-pv"> </svg> </td>
+			<td> <svg id="graph-pv-c"> </svg> </td>
+			<td> <svg id="graph-pv-e"> </svg> </td>
+			<td> <svg id="graph-pv-t"> </svg> </td>
+			<td> <svg id="graph-pv-h"> </svg> </td>
+			<td> <svg id="graph-pv-y"> </svg> </td>
+			<td> <h2 class="row-header-right"> P/V </h2> </td>
+		</tr>
+		<tr>
+			<td> </td>
+			<td> <svg id="graph-c-c"> </svg> </td>
+			<td> <svg id="graph-c-e"> </svg> </td>
+			<td> <svg id="graph-c-t"> </svg> </td>
+			<td> <svg id="graph-c-h"> </svg> </td>
+			<td> <svg id="graph-c-y"> </svg> </td>
+			<td> <h2 class="row-header-right"> Continentalness </h2> </td>
+		</tr>
+		<tr>
+			<td> </td>
+			<td> </td>
+			<td> <svg id="graph-e-e"> </svg> </td>
+			<td> <svg id="graph-e-t"> </svg> </td>
+			<td> <svg id="graph-e-h"> </svg> </td>
+			<td> <svg id="graph-e-y"> </svg> </td>
+			<td> <h2 class="row-header-right"> Erosion </h2> </td>
+		</tr>
+		<tr>
+			<td> </td>
+			<td> </td>
+			<td> </td>
+			<td> <svg id="graph-t-t"> </svg> </td>
+			<td> <svg id="graph-t-h"> </svg> </td>
+			<td> <svg id="graph-t-y"> </svg> </td>
+			<td> <h2 class="row-header-right"> Temperature </h2> </td>
+		</tr>
+		<tr>
+			<td> </td>
+			<td> </td>
+			<td> </td>
+			<td> </td>
+			<td> <svg id="graph-h-h"> </svg> </td>
+			<td> <svg id="graph-h-y"> </svg> </td>
+			<td> <h2 class="row-header-right"> Humidity </h2> </td>
+		</tr>
+		<tr>
+			<td> </td>
+			<td> </td>
+			<td> </td>
+			<td> </td>
+			<td> </td>
+			<td> <svg id="graph-y-y"> </svg> </td>
+			<td> <h2 class="row-header-right"> Depth </h2> </td>
+		</tr>
+	</tbody> </table>
+	<br>
+	<form name="input" id="form" action="javascript:void(null)">
+		<p>
+			<input type="submit" value="Change colors!" onclick="onButtonPress()"/>
+			Current colors:
+			<g id="pallet-name"> jj </g>
+		</p>
+	</form>
+	
+	<script src="biome_colors.js"> </script>
+	<script src="minecraft_biome_code.js"> </script>
+	<script src="script.js"> </script>
+</body>
