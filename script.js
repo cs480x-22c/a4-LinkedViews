@@ -227,8 +227,8 @@ function update_charts() {
 					.data(points)
 					.join("rect")
 					.style("stroke", (d) => {
-						if (params[i] >= getLowerBound(d,i) && params[i] <= getUpperBound(d,j)
-						    && params[j] >= getLowerBound(d,j) && params[j] <= getLowerBound(d,j))
+						if (params[i] >= getLowerBound(d,i) && params[i] <= getUpperBound(d,i)
+						    && params[j] >= getLowerBound(d,j) && params[j] <= getUpperBound(d,j))
 						{ return "black"; } else { return "none"; }})
 					.style("fill", (d) => useAmidstColors ? getAmidstColor(getBiome(d)) : getJjColor(getBiome(d)))
 					.attr("x", (d) => axis_width + convert(getLowerBound(d,j)))
